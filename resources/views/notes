@@ -1,0 +1,1601 @@
+@extends('backend.layouts.master')
+@section('title','E-SHOP || vehicles Page')
+@section('main-content')
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laravel Update User Status Using Toggle Button Example - ItSolutionStuff.com</title>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"  />
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script> --}}
+</head>
+<body>
+    <div class="container">
+        <h1>Laravel Update User Status Using Toggle Button Example - ItSolutionStuff.com</h1>
+        <table class="table table-bordered">
+            <thead>
+               <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Status</th>
+               </tr>
+            </thead>
+            <tbody>
+               @foreach($user as $vehicles)
+                  <tr>
+                     <td>{{ $user->name }}</td>
+                     <td>{{ $user->model }}</td>
+                     <td>
+                        {{-- <input data-id="{{$user->id}}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $user->status ? 'checked' : '' }}> --}}
+
+                        {{-- <input data-id="{{$user->id}}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $user->status =='active' ? 'checked' : '' }}> --}}
+
+             <input value="{{$user->id}}" name="toogle" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $user->status =='active' ? 'checked' : '' }}>
+
+
+                     </td>
+                  </tr>
+               @endforeach
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+  $(function() {
+    $('input[name=toogle]').change(function() {
+        var mode = $(this).prop('checked'); //== true ? 1 : 0;
+       // alert(mode)
+        var id = $(this).val();
+      //  alert(id);
+
+        $.ajax({
+            url:"{{route('vehicle.status')}}",
+
+            type: "POST",
+            // dataType: "json",
+            data:{
+                // 'status': status, 'vehicle_id': vehicle_id
+                _token:'{{csrf_token()}}',
+                mode:mode,
+                id:id,
+            },
+            success:function(response){
+                if (response.status) {
+
+                    alert(response.msg);
+
+                }
+                else {
+                    alert('Please wait for approval')
+                }
+            }
+        });
+    })
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>
+
+@endsection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="table table-bordered" id="user-dataTable" width="100%" cellspacing="0">
+    <thead>
+      <tr>
+        <th>S.N.</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Photo</th>
+        <th>Join Date</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+          <th>S.N.</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Photo</th>
+          <th>Join Date</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+    </tfoot>
+    <tbody>
+      @foreach($users as $user)
+          <tr>
+              <td>{{$user->id}}</td>
+              <td>{{$user->name}}</td>
+              <td>{{$user->email}}</td>
+              <td>
+                  @if($user->photo)
+                      <img src="{{$user->photo}}" class="img-fluid rounded-circle" style="max-width:50px" alt="{{$user->photo}}">
+                  @else
+                      <img src="{{asset('backend/img/avatar.png')}}" class="img-fluid rounded-circle" style="max-width:50px" alt="avatar.png">
+                  @endif
+              </td>
+              <td>{{(($user->created_at)? $user->created_at->diffForHumans() : '')}}</td>
+              <td>{{$user->role}}</td>
+              <td>
+
+                  <input value="{{$user->id}}" name="toogle" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $user->status =='active' ? 'checked' : '' }}>
+
+                  {{-- @if($user->status=='active')
+                      <span class="badge badge-success">{{$user->status}}</span>
+                  @else
+                      <span class="badge badge-warning">{{$user->status}}</span>
+                  @endif --}}
+              </td>
+              <td>
+                  <a href="{{route('users.edit',$user->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+              <form method="POST" action="{{route('users.destroy',[$user->id])}}">
+                @csrf
+                @method('delete')
+                    <button class="btn btn-danger btn-sm dltBtn" data-id={{$user->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                  </form>
+              </td>
+              {{-- Delete Modal --}}
+              {{-- <div class="modal fade" id="delModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="#delModal{{$user->id}}Label" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="#delModal{{$user->id}}Label">Delete user</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form method="post" action="{{ route('users.destroy',$user->id) }}">
+                          @csrf
+                          @method('delete')
+                          <button type="submit" class="btn btn-danger" style="margin:auto; text-align:center">Parmanent delete user</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+              </div> --}}
+          </tr>
+      @endforeach
+    </tbody>
+  </table>
+
+
+
+  # \App\Models\User::factory(10)->create();
+  // \App\Models\Vehicle::factory(10)->create();
+
+
+  $this->call(VehicleSeeder::class);
+  //           \App\Models\Vehicle::factory(10)->create();
+
+
+
+
+
+  Schema::create('fuelrequest_vehicles', function (Blueprint $table) {
+    $table->id();
+    $table->timestamps();
+    $table->unsignedBigInteger('vehicle_id')->index();
+    $table->unsignedBigInteger('fuelrequest_id')->index();
+
+    $table->unique(['fuelrequest_id','vehicle_id']);
+
+
+    $table->foreign('vehicle_id')->references('id')->on('vehicles')->onDelete('cascade');
+    $table->foreign('fuelrequest_id')->references('id')->on('fuelrequests')->onDelete('cascade');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+public function store(Request $request)
+{
+   // return $request->all();
+
+    // 'user_id','',
+    // '',
+    // '',
+    // 'order_number','
+    // ',
+
+
+    $this->validate($request,[
+        'present_km'=>'numeric|required',
+        'liters_km'=>'numeric|required',
+
+        'last_fuel_qty'=>'numeric|required',
+        'last_km'=>'numeric|required',
+        'last_km_when_fueling'=>'numeric|required',
+       // 'vehicle_id'=>'exists:vehicles,id,fueltank|required',
+           //'vehicle_id'=>'exists:vehicles,id|required',
+       // 'vehicle_id'=>'exists:vehicles,id|required',
+
+        'km_used'=>'numeric|required',
+        'HOD_approval'=>'required|in:active,inactive',
+        'Admin_approval'=>'required|in:active,inactive',
+        'Fuel_station_approval'=>'required|in:issued,Notissued',
+
+        'Fuel_station'=>'required',
+
+
+
+
+     ]);
+
+     $data['order_number']='ORD-'.strtoupper(Str::random(10));
+
+     $data=$request->all();
+     $data['user_id']=auth()->id();
+     $data['order_number']='ORD-'.strtoupper(Str::random(10));
+
+
+
+
+     $data['km_used']=$data['last_km']+$data['liters_km'];
+
+     //
+     $vehicle=$data['vehicle_id'];
+
+
+
+     $data=fuelrequest::create($data);
+//  return $request->all();
+   // $vehicle=$data['vehicle_id'];//Vehicle::where('status','active')->get();
+ $data->vehicles()->attach($vehicle);
+
+    //dd($vehicle);
+    // $data->vehicles()->sync($data['vehicle_id']);
+
+
+
+
+//     if ($request->has('vehicle_id')) {
+//         # code...
+
+
+
+//    return     $data->vehicles()->attach($vehicle);
+
+//     }
+ //   $data->save();
+   // dd($data);
+  // $vehicle=Vehicle::where('status','active')->get();
+  // dd($data->vehicles()->attach($vehicle));
+
+
+    //$fuelrequest->vehicles()->attach($vehicle);
+
+
+   //$data->vehicles()->attach($vehicle);
+
+
+   // $data=$data['vehicle_id']->vehicles()->attach($data);
+
+    //dd($data);
+
+
+
+
+
+
+     if ($data) {
+        return redirect()->route('fuelrequests.index', ['parameterKey' => 'success']);
+        # code...
+     }else {
+        return redirect()->back()->withErrors('someting went wrong')->withInput();
+     }
+
+     //$data->vehicles()->attach(request('vehicles'));
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+$departments = [
+
+
+
+    //        ' Admin',
+    //        'IT',
+    //        'HR',
+    //        'HSE',
+    //        'Batching plant',
+    //        'Legal',
+    //        'Logistic',
+    //        'Security',
+    //        'GED',
+    //        'Mechanical',
+    //        'Process',
+    //        'Electrical',
+    //        'Marine',
+    //        'Chemical',
+    //        'Warehouse',
+    //        'Marketing',
+    //        'Clinc',
+
+    //     ];
+    //     foreach ($departments as $department) {
+    //         department::create(['name' => $department]);
+    //    }
+
+
+
+
+
+
+    // public function index()
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Show the form for creating a new resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function create()
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Store a newly created resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function store(Request $request)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Display the specified resource.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function show($id)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function edit($id)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function update(Request $request, $id)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Remove the specified resource from storage.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function destroy($id)
+    // {
+    //     //
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="container">
+      <br>
+          <form action="{{route('fuelrequests.report')}}" method="POST" enctype="multipart/form-data">
+              @csrf
+              <div class="container">
+              <div class="row">
+              <label for="from" class="col-form-label">From</label>
+                  <div class="col-md-2">
+                  <input type="date" class="form-control input-sm" id="from" name="from">
+                  </div>
+                  <label for="from" class="col-form-label">To</label>
+                  <div class="col-md-2">
+                      <input type="date" class="form-control input-sm" id="to" name="to">
+                  </div>
+
+                  <div class="col-md-4">
+                      <button type="submit" class="btn btn-primary btn-sm" name="search" >Search</button>
+                      <button type="submit" class="btn btn-primary btn-sm" name="exportExcel" >Export excel</button>
+                      <button type="submit" class="btn btn-primary btn-sm" name="exportPDF" >Export PDF</button>
+
+
+                  </div>
+
+
+
+
+
+
+
+
+
+              </div>
+          </div>
+          </form>
+          <br>
+          <table class="table table-bordered" id="fuelrequests-dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>S.N.</th>
+                  <th>Name/phone</th>
+
+                  <th>present_km</th>
+                  <th>liters_km</th>
+                  <th>last_fuel_qty</th>
+                  <th>last_km</th>
+                  <th>last_km_when_fueling</th>
+                  <th>km_used</th>
+                  <th>fueltank</th>
+                  <th>department</th>
+                  <th>order_number</th>
+                  <th>TAG-NO</th>
+
+                  <th>Fuel_station</th>
+                  <th>Admin_approval</th>
+                  <th>HOD_approval</th>
+                  <th>Fuel_station_approval</th>
+                  <th>Action</th>
+
+
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                   <th>S.N.</th>
+                   <th>Name/phone</th>
+
+                  <th>present_km</th>
+                  <th>liters_km</th>
+                  <th>last_fuel_qty</th>
+                  <th>last_km</th>
+                  <th>last_km_when_fueling</th>
+                  <th>km_used</th>
+                  <th>fueltank</th>
+                  <th>department</th>
+                  <th>order_number</th>
+                  <th>TAG-NO</th>
+
+                  <th>Fuel_station</th>
+                  <th>Admin_approval</th>
+                  <th>HOD_approval</th>
+                  <th>Fuel_station_approval</th>
+                  <th>Action</th>
+
+                  </tr>
+              </tfoot>
+
+
+              <tbody>
+                @foreach($fuelrequest as $fuelrequests)
+
+                 @php
+                $vehicle_fueltank=DB::table('vehicles')->where('id',$fuelrequests->vehicle_id)->pluck('fueltank');
+
+                @endphp
+
+
+
+                    <tr>
+                        <td>{{$fuelrequests->id}}</td>
+
+                        <td>{{$fuelrequests->user->name}}/{{$fuelrequests->user->phone}}</td>
+
+
+                        <td>{{$fuelrequests->present_km}}</td>
+                        <td>{{$fuelrequests->liters_km}}</td>
+                        <td>{{$fuelrequests->last_fuel_qty}}</td>
+                        <td>{{$fuelrequests->last_km}}</td>
+                        <td>{{$fuelrequests->last_km_when_fueling}}</td>
+                        <td>{{$fuelrequests->km_used}}</td>
+                        {{-- <td>@foreach($fuelrequests->vehicles as $data){{($data->fueltank - $fuelrequests->last_km_when_fueling)}}  @endforeach</td> --}}
+
+                        <td>@foreach($fuelrequests->vehicles as $data){{($data->fueltank)}}  @endforeach</td>
+
+                        <td>@foreach($fuelrequests->vehicles as $data){{($data->department->name)}} @endforeach</td>
+                        <td>{{$fuelrequests->order_number}}</td>
+                        <td>@foreach($fuelrequests->vehicles as $data){{($data->tag_no)}}  @endforeach</td>
+
+                        <td>{{$fuelrequests->Fuel_station}}</td>
+
+
+
+
+
+
+                        {{-- <td>
+                            @if($fuelrequests->photo)
+                                <img src="{{$fuelrequests->photo}}" class="img-fluid zoom" style="max-width:80px" alt="{{$fuelrequests->photo}}">
+                            @else
+                                <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid zoom" style="max-width:100%" alt="avatar.png">
+                            @endif
+                        </td> --}}
+
+                        <td>
+                            <input value="{{$fuelrequests->id}}" name="toogle1" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $fuelrequests->Admin_approval =='active' ? 'checked' : '' }}>
+
+                        </td>
+
+                        <td>
+                            <input value="{{$fuelrequests->id}}" name="toogle2" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $fuelrequests->HOD_approval =='active' ? 'checked' : '' }}>
+
+                        </td>
+
+
+                        <td>
+                            <input value="{{$fuelrequests->id}}" name="toogle3" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="issued" data-off="Notissued" {{ $fuelrequests->Fuel_station_approval =='issued' ? 'checked' : '' }}>
+
+                        </td>
+
+                        <td>
+                            <a href="{{route('fuelrequests.edit',$fuelrequests->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                            <form method="POST" action="{{route('fuelrequests.destroy',[$fuelrequests->id])}}">
+                              @csrf
+                              @method('delete')
+                                  <button class="btn btn-danger btn-sm dltBtn" data-id={{$fuelrequests->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                        {{-- Delete Modal --}}
+                        {{-- <div class="modal fade" id="delModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="#delModal{{$user->id}}Label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="#delModal{{$user->id}}Label">Delete user</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <form method="post" action="{{ route('vehicle.destroy',$user->id) }}">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger" style="margin:auto; text-align:center">Parmanent delete user</button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                        </div> --}}
+                    </tr>
+                @endforeach
+              </tbody>
+            </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@extends('backend.layouts.master')
+@section('title','E-SHOP || fuelrequests Page')
+@section('main-content')
+ <!-- DataTales Example -->
+ <div class="card shadow mb-4">
+     <div class="row">
+         <div class="col-md-12">
+            {{-- @include('backend.layouts.notification') --}}
+         </div>
+     </div>
+     <br>
+     <form action="{{route('fuelrequests.report')}}" method="POST" enctype="multipart/form-data">
+         @csrf
+         <div class="container">
+         <div class="row">
+         <label for="from" class="col-form-label">From</label>
+             <div class="col-md-2">
+             <input type="date" class="form-control input-sm" id="from" name="from">
+             </div>
+             <label for="from" class="col-form-label">To</label>
+             <div class="col-md-2">
+                 <input type="date" class="form-control input-sm" id="to" name="to">
+             </div>
+
+             <div class="col-md-4">
+                 <button type="submit" class="btn btn-primary btn-sm" name="search" >Search</button>
+                 <button type="submit" class="btn btn-primary btn-sm" name="exportExcel" >Export excel</button>
+                 <button type="submit" class="btn btn-primary btn-sm" name="exportPDF" >Export PDF</button>
+
+
+             </div>
+
+
+
+
+
+
+
+
+
+         </div>
+     </div>
+     </form>
+     <br>
+
+
+    <div class="card-body">
+      <div class="table-responsive">
+        {{-- @if(count($fuelrequest)>0) --}}
+
+
+
+        <table class="table table-bordered" id="fuelrequests-dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>S.N.</th>
+              <th>Name/phone</th>
+
+              <th>present_km</th>
+              <th>liters_km</th>
+              <th>last_fuel_qty</th>
+              <th>last_km</th>
+              <th>last_km_when_fueling</th>
+              <th>km_used</th>
+              <th>fueltank</th>
+              <th>department</th>
+              <th>order_number</th>
+              <th>TAG-NO</th>
+
+              <th>Fuel_station</th>
+              <th>Admin_approval</th>
+              <th>HOD_approval</th>
+              <th>Fuel_station_approval</th>
+              <th>Action</th>
+
+
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+               <th>S.N.</th>
+               <th>Name/phone</th>
+
+              <th>present_km</th>
+              <th>liters_km</th>
+              <th>last_fuel_qty</th>
+              <th>last_km</th>
+              <th>last_km_when_fueling</th>
+              <th>km_used</th>
+              <th>fueltank</th>
+              <th>department</th>
+              <th>order_number</th>
+              <th>TAG-NO</th>
+
+              <th>Fuel_station</th>
+              <th>Admin_approval</th>
+              <th>HOD_approval</th>
+              <th>Fuel_station_approval</th>
+              <th>Action</th>
+
+              </tr>
+          </tfoot>
+
+
+          <tbody>
+            @foreach($fuelrequest as $fuelrequests)
+
+             @php
+            $vehicle_fueltank=DB::table('vehicles')->where('id',$fuelrequests->vehicle_id)->pluck('fueltank');
+
+            @endphp
+
+
+
+                <tr>
+                    <td>{{$fuelrequests->id}}</td>
+
+                    <td>{{$fuelrequests->user->name}}/{{$fuelrequests->user->phone}}</td>
+
+
+                    <td>{{$fuelrequests->present_km}}</td>
+                    <td>{{$fuelrequests->liters_km}}</td>
+                    <td>{{$fuelrequests->last_fuel_qty}}</td>
+                    <td>{{$fuelrequests->last_km}}</td>
+                    <td>{{$fuelrequests->last_km_when_fueling}}</td>
+                    <td>{{$fuelrequests->km_used}}</td>
+                    {{-- <td>@foreach($fuelrequests->vehicles as $data){{($data->fueltank - $fuelrequests->last_km_when_fueling)}}  @endforeach</td> --}}
+
+                    <td>@foreach($fuelrequests->vehicles as $data){{($data->fueltank)}}  @endforeach</td>
+
+                    <td>@foreach($fuelrequests->vehicles as $data){{($data->department->name)}} @endforeach</td>
+                    <td>{{$fuelrequests->order_number}}</td>
+                    <td>@foreach($fuelrequests->vehicles as $data){{($data->tag_no)}}  @endforeach</td>
+
+                    <td>{{$fuelrequests->Fuel_station}}</td>
+
+
+
+
+
+
+                    {{-- <td>
+                        @if($fuelrequests->photo)
+                            <img src="{{$fuelrequests->photo}}" class="img-fluid zoom" style="max-width:80px" alt="{{$fuelrequests->photo}}">
+                        @else
+                            <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid zoom" style="max-width:100%" alt="avatar.png">
+                        @endif
+                    </td> --}}
+
+                    <td>
+                        <input value="{{$fuelrequests->id}}" name="toogle1" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $fuelrequests->Admin_approval =='active' ? 'checked' : '' }}>
+
+                    </td>
+
+                    <td>
+                        <input value="{{$fuelrequests->id}}" name="toogle2" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="InActive" {{ $fuelrequests->HOD_approval =='active' ? 'checked' : '' }}>
+
+                    </td>
+
+
+                    <td>
+                        <input value="{{$fuelrequests->id}}" name="toogle3" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="issued" data-off="Notissued" {{ $fuelrequests->Fuel_station_approval =='issued' ? 'checked' : '' }}>
+
+                    </td>
+
+                    <td>
+                        <a href="{{route('fuelrequests.edit',$fuelrequests->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                        <form method="POST" action="{{route('fuelrequests.destroy',[$fuelrequests->id])}}">
+                          @csrf
+                          @method('delete')
+                              <button class="btn btn-danger btn-sm dltBtn" data-id={{$fuelrequests->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                    {{-- Delete Modal --}}
+                    {{-- <div class="modal fade" id="delModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="#delModal{{$user->id}}Label" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="#delModal{{$user->id}}Label">Delete user</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form method="post" action="{{ route('vehicle.destroy',$user->id) }}">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn btn-danger" style="margin:auto; text-align:center">Parmanent delete user</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                    </div> --}}
+                </tr>
+            @endforeach
+          </tbody>
+        </table>
+        {{-- <span style="float:right">{{$fuelrequests->links()}}</span> --}}
+        {{-- @else
+          <h6 class="text-center">No vehicle found!!! Please create fuelrequests</h6> --}}
+        {{-- @endif --}}
+      </div>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+  <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"  />
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+
+
+  <style>
+      div.dataTables_wrapper div.dataTables_paginate{
+          display: none;
+      }
+      .zoom {
+        transition: transform .2s; /* Animation */
+      }
+
+      .zoom:hover {
+        transform: scale(3.2);
+      }
+  </style>
+@endpush
+
+@push('scripts')
+
+  <!-- Page level plugins -->
+  <script src="{{asset('backend/vendor/datatables/jquery.dataTables.min.js')}}"></script>
+  <script src="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+{{--
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"  />
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+ --}}
+
+
+
+
+
+
+
+
+  <!-- Page level custom scripts -->
+  <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
+
+
+
+  <script>
+
+      $('#fuelrequests-dataTable').DataTable( {
+            "columnDefs":[
+                {
+                    "orderable":false,
+                    "targets":[3,4,5]
+                }
+            ]
+        } );
+
+        // Sweet alert
+
+        function deleteData(id){
+
+        }
+  </script>
+  <script>
+      $(document).ready(function(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+          $('.dltBtn').click(function(e){
+            var form=$(this).closest('form');
+              var dataID=$(this).data('id');
+              // alert(dataID);
+              e.preventDefault();
+              swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this data!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                       form.submit();
+                    } else {
+                        swal("Your data is safe!");
+                    }
+                });
+          })
+      })
+  </script>
+
+
+<script>
+    // $(function() {
+    //   $('input[name=toogle]').change(function() {
+    //       var mode = $(this).prop('checked'); //== true ? 1 : 0;
+    //      // alert(mode)
+    //       var id = $(this).val();
+    //     //  alert(id);
+
+    //       $.ajax({
+    //           url:"{{route('vehicle.status')import2cle_id': vehicle_id
+    //               _token:'{{csrf_token()}}',
+    //               mode:mode,
+    //               id:id,
+    //           },
+    //           success:function(response){
+    //               if (response.status) {
+
+    //                   alert(response.msg);
+
+    //               }
+    //               else {
+    //                   alert('Please wait for approval')
+    //               }
+    //           }
+    //       });
+    //   })
+    // })
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+<script>
+    $(function() {
+      $('input[name=toogle1]').change(function() {
+          var mode = $(this).prop('checked'); //== true ? 1 : 0;
+         // alert(mode)
+          var id = $(this).val();
+        //  alert(id);
+
+          $.ajax({
+              url:"{{route('admin.status')}}",
+
+              type: "POST",
+              // dataType: "json",
+              data:{
+                  // 'status': status, 'vehicle_id': vehicle_id
+                  _token:'{{csrf_token()}}',
+                  mode:mode,
+                  id:id,
+              },
+              success:function(response){
+                  if (response.status) {
+
+                      alert(response.msg);
+
+                  }
+                  else {
+                      alert('Please wait for approval')
+                  }
+              }
+          });
+      })
+    })
+
+  </script>
+
+
+
+
+
+
+
+
+
+<script>
+    $(function() {
+      $('input[name=toogle2]').change(function() {
+          var mode = $(this).prop('checked'); //== true ? 1 : 0;
+         // alert(mode)
+          var id = $(this).val();
+        //  alert(id);
+
+          $.ajax({
+              url:"{{route('hod.status')}}",
+
+              type: "POST",
+              // dataType: "json",
+              data:{
+                  // 'status': status, 'vehicle_id': vehicle_id
+                  _token:'{{csrf_token()}}',
+                  mode:mode,
+                  id:id,
+              },
+              success:function(response){
+                  if (response.status) {
+
+                      alert(response.msg);
+
+                  }
+                  else {
+                      alert('Please wait for approval')
+                  }
+              }
+          });
+      })
+    })
+
+  </script>
+
+
+
+
+
+
+
+
+
+<script>
+    $(function() {
+      $('input[name=toogle3]').change(function() {
+          var mode = $(this).prop('checked'); //== true ? 1 : 0;
+         // alert(mode)
+          var id = $(this).val();
+        //  alert(id);
+
+          $.ajax({
+              url:"{{route('FSA.status')}}",
+
+              type: "POST",
+              // dataType: "json",
+              data:{
+                  // 'status': status, 'vehicle_id': vehicle_id
+                  _token:'{{csrf_token()}}',
+                  mode:mode,
+                  id:id,
+              },
+              success:function(response){
+                  if (response.status) {
+
+                      alert(response.msg);
+
+                  }
+                  else {
+                      alert('Please wait for approval')
+                  }
+              }
+          });
+      })
+    })
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+@endpush
+
+
+
+
+
+
+
+
+
+
+
+test
+
+
+
+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
+
+
+https://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@github.com/hasin0/fueltrack.git
+<!--  -->
+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
+dd
+tttttttttttttttttttttttttttttttttttttttttttttttest
+
+
+
+df
+
+
+
+
+
+
+// pipeline {
+    //     agent any
+
+    //     stages {
+    //         stage('Clone Repository') {
+    //             steps {
+    //                 git 'https://github.com/hasin0/fueltrack.git'
+    //             }
+    //         }
+    //         stage('Install Dependencies') {
+    //             steps {
+    //                 sh 'composer install --no-interaction'
+    //             }
+    //         }
+    //        stage('Run Tests') {
+    //     steps {
+    //         script {
+    //             //sh 'phpunit'
+    //             echo "testing"
+    //         }
+    //     }
+    // }
+    // stage('Deploy to Server') {
+    //             steps {
+    //                 sshagent(['id_rsa.pub']) {
+
+    //                         sh 'rsync -avz -e "ssh -p22" --exclude-from="rsync-exclude.txt" . ubuntu@54.158.64.65:/var/www/html/fueltrack; \
+    //                             composer install --no-interaction --no-dev; \
+    //                             php artisan migrate --force; \
+    //                             php artisan cache:clear; \
+    //                             php artisan config:cache;'
+
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // jenkins key
+
+    // ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCxfHgdN9eVG1HhQzNCoryNYCAX3AnGPGhjyo82LIOZuN9VsLTCZwnxXBWNZSD13UWy1ekOVeW03oStFfCOw7CQmM3QQavINCqyS2d7XcxcDtQ7fmBDVBobKitohe+ksI9u3mEftucVetd9qQGkvSspX/BaUZNgrVjojPZkA7fn/2L/5SmuVxmE3P++ozMpYFj/IN9yIj6sehyrXO9MfEvnkG1oXkfLl4SVf1P0HA+LcLKo8lQPrkcs0hq+e/zC2RAvM8EZ8j9Xz3ghxbb/+Qyjfv5LVWNUpZ58qjoTOl0uSPTKwqLVyTaIGKUyBdPcx7gbtiBZGHX7pw12Ak+sWwsTy4SAmklpT8ivaIygNkPIZxzrU5AI/TxTWQoO7DyTZveRhOlSc9ERMTbgpAEEipAw6ZaZAv6sGt7j06Ofo1kt1Fqe2a+0CUfSW1b5kEKMVTzeiqgAmgCPBtke6esQK41OWrKzgqO3HXkr8hKwSrNh8drgq6FcKrmDpbbI5ATlRss= jenkins@ip-172-31-95-149
+
+    //composer install --ignore-platform-req=ext-gd
+
+
+
+
+    // freestyle projects pipelines
+
+
+    pipeline{
+        agent any
+        stages {
+            stage('Build') {
+                steps {
+                    // sh 'composer install --no-scripts'
+                    //  sh 'composer install --no-interaction'
+    echo "building"
+                    // sh 'php artisan key:generate'
+                    // sh 'php artisan migrate --force'
+                }
+            }
+            stage('Test') {
+                steps {
+                    // sh 'phpunit'
+                    echo "testing"
+                }
+            }
+            stage('Deploy') {
+
+                steps {
+
+                    // echo "deploying "
+
+                     sh 'scp target/*.war ubuntu@54.158.64.65:/var/www/html/fueltrack'
+                    sh 'rsync -avz -e "ssh -p22" --exclude-from="rsync-exclude.txt" . ubuntu@54.158.64.65:/var/www/html/fueltrack; \
+
+                     sh composer install --no-interaction; \
+
+                     php artisan migrate --force; \
+                     php artisan cache:clear; \
+                     php artisan config:cache; \
+                      '
+
+                    //    script {
+                    //     def changes = changedFiles(includePaths: ['/var/www/html/fueltrack'], ignoreDeletes: true)
+                    //     changes.each {
+                    //         // sh "scp ${it.path} user@host:/path/to/deploy"
+                    //           echo "deploying "
+                    //     }
+                    //  }
+                }
+            }
+        }
+    }
+
+
+    how to push docker to dockerhub
+
+    sudo docker tag a2ae7188d4ba hasino2258/fueltrack:2.1 or latest c
+
+
+sudo docker push hasino2258/fueltrack:2.1
+
+docker build -t fueltrack:2.1 .
+docker run -d -p 9001:9001 fueltrack-app:latest
+
+
+php artisan db:seed --class=DepartmentTableSeeder
+
+php artisan db:seed --class=VehicleSeeder
+
+
+
+php artisan db:seed --class=FuelstationSeeder
+
+php artisan db:seed --class=PermissionTableSeeder
+php artisan db:seed --class=UsersTableSeeder
+
+
+
+
+
+
+
+
+
+pipeline {
+    agent any
+    environment {
+    DOCKERHUB_CREDENTIALS = credentials('valaxy-dockerhub')
+    }
+    stages {
+        stage('SCM Checkout') {
+            steps{
+            git 'https://github.com/ravdy/nodejs-demo.git'
+            }
+        }
+
+        stage('Build docker image') {
+            steps {
+                sh 'docker build -t valaxy/nodeapp:$BUILD_NUMBER .'
+            }
+        }
+        stage('login to dockerhub') {
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('push image') {
+            steps{
+                sh 'docker push valaxy/nodeapp:$BUILD_NUMBER'
+            }
+        }
+}
+post {
+        always {
+            sh 'docker logout'
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // pipeline {
+    //    agent any
+
+    //     stages {
+    //         stage('Build') {
+    //             steps {
+
+    //                                 echo 'building'
+
+
+
+
+    //                 //  sh 'php --version'
+    //                 // sh 'composer install'
+    //                 // sh 'composer --version'
+    //                 // sh 'cp .env.example .env'
+    //                 // sh 'php artisan key:generate'
+    // //                git 'https://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@github.com/hasin0/fueltrack.git'
+    //             //  sh  'sudo mv composer.phar /usr/local/bin/composer'
+
+    //         //     //     sh 'composer install --no-interaction'
+    //         //       sh 'chmod +x scripts/jenkins-build.sh'
+    //         //  sh './scripts/jenkins-build.sh'
+    //         //         // sh 'cp .env.example .env'
+    //         //         // sh 'php artisan key:generate'
+    //             }
+    //         }
+    //         stage('Test') {
+    //             steps {
+    //                 // sh './vendor/bin/phpunit'
+    //                                 echo 'test'
+
+    //             }
+    //         }
+    //     }
+
+    //   }
+
+
+
+    pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE_NAME = "rahul4884/train-schedule"
+    }
+    stages {
+        stage("Checkout from github repo"){
+            steps{
+            git url: 'https://github.com/Patelrahul4884/cicd-pipeline-train-schedule-autodeploy.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Running build automation'
+                sh './gradlew build --no-daemon'
+                archiveArtifacts artifacts: 'dist/trainSchedule.zip'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    app = docker.build(DOCKER_IMAGE_NAME)
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
+            }
+        }
+        stage('DeployToProduction') {
+            steps {
+                kubeconfig(caCertificate: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJeU1USXdOREUwTXpZME5sb1hEVE15TVRJd01URTBNelkwTmxvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTVV4CnR2eFdmcmNGV2crVFpxSi92U3pWRFlPSVVMWE0zMlRxOW9TL1g5UzZVVjNkZ0xUTDI4V0IvblF0K0xGbjNwWEQKOE9RNTZVN25sZlhiSWI0Q1ZUdVVkVDg0c2xGcVdWN2lkUVlGNXVNaERDamF2MW16OG9IbVJQVXlBVW9HQWY5VApWWUFxY3h2VnVvbDVKa1EydXpyTHJrZ1VJU2k3dVdYdlVxRnl4bW8rUWt2cWRiUm5ldDBpbHNTbU5FdDlObTNTClVJSStrbTRZU3lod2xtTHlOYXJPc0lsNVU3ZXpuUG1Ua0E0MXN1ZG4wSjNRMXBYQUdSY2NqVXVzWjBIK3FyZm4KOGJWdFpuMmhsbms0VHRMSGhEUS81MFNXOCt1MEVLOHo2Sms5bHVET1BiSjdxam11U0Y1c3RJUDg1VWo2SndhMgpoUm1sclU1UUlzSTd5ZWlFMzZFQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZQcFhkVmc3LzJiUGhBZytZdys4WFIzWk90OUJNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBR2IwcEEwQythVFVDdytOY1FyZgp3NHNhQStUMnNMU0xTM3NGOWh1NEdKU0lHaXdPTDRja2pscE1sUTE5aDltWnVpdVBkOEhNa0RrWTBTRHQvRXdyCm94MVdrYTlxMkFEZ0hyVCtDUzBOWHVJMDBLQ0QzdDd5czBhdGl6b21lWnppcE9aYkZRdnI2eEU0bUhQY0hNQUEKQ1dMR2RvRjNhVEZFODJIUWxLWkM4anFHUklqeE5SWlFpZ1IvVXlxSktYZWs1Z1BQZGVzckJRY2NuQzVtVWxoOQo0cktwT1p0UTBjajFMakx2dkQxNWdCMkVSVzBtK2lDTUhCM1g1SGJXdkZWOEgzOEFzcjc5amwrMHFoU1lRTTVoCmsweVNxd3gvY2hFd0hWc0NURjNKSUZUejAwZVhFa0VPdE1yVitYWEhKNk9jdzFINXFvNFhHY0NoUDN2c3NZbFMKUWw0PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==', credentialsId: 'kubernetes', serverUrl: 'https://192.168.59.104:8443') {
+    // some block
+                 sh 'kubectl apply -f deployment.yaml'
+                 sh 'kubectl apply -f app-service.yaml'
+                 sh 'kubectl rollout restart deployment train-schedule'
+}
+            }
+        }
+    }
+}
+
+
+node {
+    def app
+
+    stage('Clone repository') {
+        /* Cloning the Repository to our Workspace */
+
+        checkout scm
+    }
+
+    stage('Build image') {
+        /* This builds the actual image */
+
+        app = docker.build("hasino2258/fueltrack")
+    }
+
+    // stage('Test image') {
+
+    //     app.inside {
+    //         echo "Tests passed"
+    //     }
+    // }
+
+    stage('Push image') {
+        /*
+			You would need to first register with DockerHub before you can push images to your account
+		*/
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-cred') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+            }
+                echo " Push Docker Build to DockerHub"
+    }
+
+    // stage('Delete image') {
+    //     /* This deletes the previously built image */
+
+    //     sh "docker rmi hasino2258/fueltrack:${env.BUILD_NUMBER}"
+    //     sh "docker rmi hasino2258/fueltrack:latest"
+    // }
+
+    stage('DeployToProduction') {
+            steps {
+                kubeconfig(caCertificate: 'MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5pa3ViZUNBMB4XDTIzMDExMDExMzU0MloXDTMzMDEwODExMzU0MlowFTETMBEGA1UEAxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN13VUtS8xsEgqHY5St4GrNXXd4icg83G7ocCroRSrZUEPPElr7IwZx1E25BtVfrWXfwLufuOTr3l4G66xlqzleFsDo11ojF3TruZARv2YJ4eVFgYDpYiFm8TL4b1L/NPhoXD8ubpVpLABw2pFjxrKLke02RdC4qPWqisNjhDKDRRmy6hCo/8/Ky8538lCksIfHvFsTOvVVdGCjP51/nnVQcszhSrcIQ6z2Mu69bvXzFXsQvOsHPDL1Ca0o4hKF23sMNIpXLiL5jpedu6gL0C0OKGLFuhX081xdiCOL/JrR6KsRUndZjwawFAzmMWUxvgy329ZrGbgd6yHTdZJC0A6cCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTqjX0tENDwiiMuUVqGWbMuJj2fLDANBgkqhkiG9w0BAQsFAAOCAQEAPx67dN9SXCUwQaHcIOu1YhEbdxXWSRoNilmXznoCKNhfTOz2is0uwPRSnRnsXwrdf8WdO01eYct3p+u53HiC8Cm0JqMVdk0M8X/1FxN/qyiQ55lp5Mooi9Z/lCBTqDuPrbnomFfguiUCO4mBgYNDa0k5rJvOtXr0RukXLcrkO0YNZ7D+7/EeLANTyyrUnTvZy7xWt8EzapRcBvGpeC4KBU1hH5rJ6EMmufvmFo0E6+kDv1MOl5ngfw03zK5MX60py9dY+5bnncq21ctNSc4Ft4M0cRDf1j5uo9SEeWc7eeL9SbS50YjDwO6cedFi/hIlppWNrM5gdoKKusB9O7gJnA==', credentialsId: 'kubernetess', serverUrl: 'https://192.168.49.2:8443') {
+    // some block
+                 sh 'kubectl apply -f fueltrack-depl.yaml'
+                //  sh 'kubectl apply -f app-service.yaml'
+                 sh 'kubectl rollout restart deployment train-schedule'
+}
+            }
+        }
+}
+
+
+
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone repository') {
+            steps {
+                /* Cloning the Repository to our Workspace */
+                checkout scm
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                /* This builds the actual image */
+                script {
+                    docker.build("hasino2258/fueltrack")
+                }
+            }
+        }
+
+        // stage('Test image') {
+        //     steps {
+        //         script {
+        //             /* Run tests on the built image */
+        //             sh "docker run hasino2258/fueltrack npm run test"
+        //         }
+        //     }
+        // }
+
+        stage('Push image') {
+            steps {
+                script {
+                    /*
+                        You would need to first register with DockerHub before you can push images to your account
+                    */
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-cred') {
+                        def app = docker.image("hasino2258/fueltrack")
+
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            environment {
+                KUBECONFIG = credentials('kubernetess')
+            }
+
+            steps {
+                script {
+
+
+                    //   sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
+                    //   sh 'chmod u+x ./kubectl'
+                    //   sh './kubectl get pods'
+                    /*
+                        Apply the Kubernetes deployment and service manifests to the Kubernetes cluster
+                    */
+                    sh 'kubectl apply -f fueltrack-depl.yaml'
+                    // sh 'kubectl apply -f app-service.yaml'
+
+                    /*
+                        Restart the deployment to update the Kubernetes pods
+                    */
+                    sh 'kubectl rollout restart deployment fueltrack-depl.yaml'
+                }
+            }
+        }
+    }
+}
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "Nodeport"}}'
+kubectl port-forward svc/argocd-server -n argocd 8181:443
+
+
+    stage('Trigger updatemanifest-fueltrack-k8s-job') {
+                // echo "triggering updatemanifestjob"
+                build job: 'fueltrack-k8s', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+        }

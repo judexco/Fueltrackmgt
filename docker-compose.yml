@@ -1,0 +1,222 @@
+version: '3.8'
+services:
+
+
+#  jenkins:
+#     container_name: jenkins
+#     restart: always
+#     image: jenkins/jenkins
+#     ports:
+#       - 8080:8080
+#       - 50000:50000
+#     volumes:
+#        - dbdata:/var/jenkins_home jenkins
+
+#  volumes:
+#    /home/ubuntu/fueltrack:
+
+
+
+
+ app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fueltrack-app
+    container_name: fueltrack
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 9001:9001
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /fueltrack-app
+    volumes:
+      - ./:/fueltrack-app
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+
+    depends_on:
+    - db
+
+
+ db:
+    image: mysql/mysql-server:latest
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+            - ./mysql-data/mysql/db:/var/lib/mysql
+    container_name: mysql_db1
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fueltrack_db
+      MYSQL_ROOT_HOST: "%"
+      
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+
+
+ phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-fueltrack
+    links:
+      - db
+    restart: always
+    ports:
+      - 8181:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_PORT: 3306
+      PMA_HOST: db
+    #   - PMA_USER=root
+    #   - PMA_PASSWORD=root
+    #   - PMA_PORT=3306
+
+
+
+#Nginx Service
+ webserver:
+    image: nginx:alpine
+    container_name: Webserver
+    volumes:
+      - ./:/fueltrack-app
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "9090:80"
+      - "443:443"
+
+volumes:
+    dbdata:
+
+
+
+# jenkins:
+#     image: jenkins/jenkins:lts
+#     container_name: jenkins
+#     ports:
+#       - "8080:8080"
+#       - "50000:50000"
+
+
+
+
+# sdddd
+
+
+
+
+
+
+
+
+
+
+
+# volumes:
+# - ~/jenkins:/var/jenkins_home
+# - /var/run/docker.sock:/var/run/docker.sock
+# - /usr/local/bin/docker:/usr/local/bin/docker
+
+
+
+
+#  pma:
+#         image: phpmyadmin:5.1
+#         environment:
+#             - PMA_ARBITRARY=1
+#             - PMA_HOST=${DB_HOST}
+#             - PMA_USER=${DB_USERNAME}
+#             - PMA_PASSWORD=${DB_PASSWORD}
+#             - PMA_PORT=${DB_PORT}
+#         depends_on:
+#             - database
+#         ports:
+#             - 8888:80
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#  webserver:
+#     image: nginx:alpine
+#     container_name: webserver
+#     restart: unless-stopped
+#     tty: true
+#     ports:
+#       - "80:80"
+#       - "443:443"
+
+
+# version: '2'
+
+# services:
+#   mariadb:
+#     image: docker.io/bitnami/mariadb:10.6
+#     environment:
+#       # ALLOW_EMPTY_PASSWORD is recommended only for development.
+#       - ALLOW_EMPTY_PASSWORD=yes
+#       - MARIADB_USER=bn_myapp
+#       - MARIADB_DATABASE=bitnami_myapp
+#   myapp:
+#     image: docker.io/bitnami/laravel:9
+#     ports:
+#       - '8000:8000'
+#     environment:
+#       - DB_HOST=mariadb
+#       - DB_PORT=3306
+#       - DB_USERNAME=bn_myapp
+#       - DB_DATABASE=bitnami_myapp
+#     volumes:
+#       - './my-project:/app'
+#     depends_on:
+#       - mariadb
+
+
+
+
+
+
+
+
+
+
+
+# version: '3.8'
+# services:
+#   db:
+#     image: mysql:8.0
+#     cap_add:
+#       - SYS_NICE
+#     restart: always
+#     environment:
+#       - MYSQL_DATABASE=quotes
+#       - MYSQL_ROOT_PASSWORD=mauFJcuf5dhRMQrjj
+#     ports:
+#       - '3306:3306'
+#     volumes:
+#       - db:/var/lib/mysql
+#       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+# volumes:
+#   db:
+#     driver: local
+# docker run -it -p 8080:80 fueltrack-app
