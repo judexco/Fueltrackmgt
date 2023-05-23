@@ -93,3 +93,35 @@ docker-compose down
 4. php artisan db:seed --class=UsersTableSeeder
 
  php artisan serve
+
+ Push your app to Github accout
+
+ git init, git add . git remote -v git status, git
+ Or you are trying to create a new GitHub project.
+
+GitHub replaced master with main as the default branch name. To resolve the issue:
+On your local project:
+remove the .git folder if it exists
+recreate a clean repository by launching the following in your project:
+In the terminal:
+git init
+git add .
+git commit -m "First commit"
+git branch -M main
+git remote add origin https://github.com/judexco/Fueltrackmgt.git
+git push -u origin main
+
+Build your App,
+docker buil -t fueltracksystem:v1 .    or :latest
+then you can create network, by default with docker-compose.yml network is created
+docker network create network_name   in this case no need app image is already running with DB using default network created fueltracksystem_default
+
+Now to push the image to Docker Registery which is ur docker hub account
+docker login
+docker tag fueltracksystem-app:v1 jerryjude/fueltracksystem:v1
+docker push jerryjude/fueltracksystem:v1
+image pushed to docker hub registry
+
+docker pull jerryjude/fueltracksystem:v1      to pull this on another system
+then run 
+docker run image_name up      to start the image in a container boom the will up and running

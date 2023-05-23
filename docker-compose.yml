@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: fueltrack-app
+    image: fueltrack-app:v1
     container_name: fueltrack
     restart: unless-stopped
     tty: true

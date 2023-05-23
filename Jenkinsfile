@@ -65,19 +65,6 @@ pipeline {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // pipeline {
 //     agent any
 
@@ -169,25 +156,6 @@ pipeline {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // pipeline {
 //     agent any
 
@@ -265,24 +233,6 @@ pipeline {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // pipeline {
 // environment {
 // registry = "https://hub.docker.com/repository/docker/hasino2258/fueltrack/general"
@@ -321,16 +271,6 @@ pipeline {
 // }
 
 
-
-
-
-
-
-
-
-
-
-
 // pipeline {
 //     agent any
 //     environment {
@@ -365,34 +305,6 @@ pipeline {
 //         }
 //     }
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // pipeline {
@@ -480,13 +392,6 @@ pipeline {
 
 
 
-
-
-
-
-
-
-
 // pipeline {
 //     agent any
 
@@ -525,22 +430,6 @@ pipeline {
 //     }
 
 //  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // jenkins key
@@ -600,38 +489,6 @@ pipeline {
 //         }
 //     }
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // pipeline {
