@@ -13,7 +13,7 @@ pipeline {
             steps {
                 /* This builds the actual image */
                 script {
-                    docker.build("hasino2258/fueltrack")
+                    docker.build("jerryjude/fueltracksystem")
                 }
             }
         }
@@ -24,8 +24,8 @@ pipeline {
                     /*
                         You would need to first register with DockerHub before you can push images to your account
                     */
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-cred') {
-                        def app = docker.image("hasino2258/fueltrack")
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        def app = docker.image("jerryjude/fueltracksystem")
 
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
@@ -53,8 +53,8 @@ pipeline {
             steps {
                 script {
 
-                       echo "triggering updatemanifest-fueltrack-k8s-job"
-                       build job: 'fueltrack-k8s', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+                       echo "triggering updatemanifest-fueltrack_kubernetes-job"
+                       build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
 
                 }
             }
