@@ -10,7 +10,7 @@ pipeline {
             steps {
                 /* Cloning the Repository to our Workspace */
                 //checkout scm
-                git 'https://github.com/judexco/Fueltrackmgt.git'
+                git credentialsId: 'github', url: 'https://github.com/judexco/Fueltrackmgt.git'
               
             }
         }
