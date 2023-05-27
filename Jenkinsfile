@@ -5,7 +5,9 @@ pipeline {
         stage('Clone repository') {
             steps {
                 /* Cloning the Repository to our Workspace */
-                checkout scm
+                //checkout scm
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/judexco/Fueltrackmgt']]])
+              
             }
         }
 
