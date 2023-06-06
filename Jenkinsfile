@@ -23,7 +23,7 @@ node {
     stage('Push image') {
         
         docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-            def app = docker.image("jerryjude/fueltracksystem")
+            app = docker.image("jerryjude/fueltracksystem")
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
