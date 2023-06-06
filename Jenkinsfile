@@ -1,16 +1,12 @@
 pipeline {
-    environment {
-    dockerimagename = "jerryjude/fueltracksystem"
-    dockerImage = ""
-  }
     agent any
 
     stages {
         stage('Clone repository') {
             steps {
                 /* Cloning the Repository to our Workspace */
-                //checkout scm
-                git credentialsId: 'github', url: 'https://github.com/judexco/Fueltrackmgt.git'
+                checkout scm
+                //git credentialsId: 'github', url: 'https://github.com/judexco/Fueltrackmgt.git'
               
             }
         }
@@ -19,28 +15,25 @@ pipeline {
             steps {
                 /* This builds the actual image */
                 script {
-                    /*docker.build("jerryjude/fueltracksystem") */
-                    dockerImage = docker.build dockerimagename
+                    docker.build("jerryjude/fueltracksystem") 
+                    //dockerImage = docker.build dockerimagename
                 }
             }
         }
 
         stage('Push image') {
-            environment {
-               registryCredential = 'dockerhub'
-           }
             steps {
                 script {
                     /*
                         You would need to first register with DockerHub before you can push images to your account
                     */
-                    docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-                    dockerImage.push("latest")
+                     /*docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+                    dockerImage.push("latest") */
                         
-                   /* docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
                         def app = docker.image("jerryjude/fueltracksystem")
                         app.push("${env.BUILD_NUMBER}")
-                        app.push("latest") */
+                        app.push("latest") 
                     }
                 }
             }
