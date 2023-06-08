@@ -13,8 +13,6 @@ pipeline {
             steps {
                 /* This builds the actual image */
                 script {
-                    def dockerHome = tool 'mydocker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
                     
                     docker.build("jerryjude/fueltracksystem")
                 }
